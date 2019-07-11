@@ -46,7 +46,7 @@ public class RTCapture : MonoBehaviour {
     {
         if(saveToRT)
         {
-            Debug.LogError("Copy Texture:" + Time.frameCount);
+            //Debug.Log("Copy Texture:" + Time.frameCount);
 
             RTToTexture();
             saveToRT = false;
@@ -80,7 +80,7 @@ public class RTCapture : MonoBehaviour {
         if (CamRenderFrameCount == Time.frameCount)
             return;
 
-        Debug.LogError("AAA  Render:" + Time.frameCount);
+        //Debug.Log("AAA  Render:" + Time.frameCount);
 
         CamRenderFrameCount = Time.frameCount;
 
