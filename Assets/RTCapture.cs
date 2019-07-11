@@ -5,72 +5,88 @@ using UnityEngine.UI;
 
 public class RTCapture : MonoBehaviour {
 
-    public RenderTexture m_2dshotRtt = null;
     public Texture2D m_2dShotTextre = null;
     public Image m_image = null;
 
-    public Camera m_rts_cmr2dShot = null;
-    public GameObject m_cmrObject = null;
+    public static RenderTexture m_2dshotRtt = null;
+    public static Camera m_rts_cmr2dShot = null;
+    public static int CamRenderFrameCount = -1;
+
 
     public int m_width = 128;
     public int m_height = 128;
 
+    //bool drawRT = false;
+    bool RenderOnce = false;
 
-    bool drawRT = false;
     void Awake()
     {
-        if (null == m_cmrObject)
-            return;
-        m_rts_cmr2dShot = m_cmrObject.GetComponent<Camera>();
-        if (null == m_rts_cmr2dShot)
-            return;
 
-        m_2dshotRtt = RenderTexture.GetTemporary((int)m_width, (int)m_height, 24, RenderTextureFormat.ARGB32);
-        m_2dshotRtt.DiscardContents();
+        if(m_rts_cmr2dShot == null) 
+        {
+            GameObject cam_obj = GameObject.Find("CameraRT");
+            m_rts_cmr2dShot = cam_obj.GetComponent<Camera>();
+            if (null == m_rts_cmr2dShot)
+                return;
+        }
 
-        m_rts_cmr2dShot.enabled = false;
-        m_rts_cmr2dShot.targetTexture = m_2dshotRtt;
+        if(m_2dshotRtt == null)
+        {
+            m_2dshotRtt = RenderTexture.GetTemporary((int)m_width, (int)m_height, 24, RenderTextureFormat.ARGB32);
+            m_2dshotRtt.DiscardContents();
+
+            m_rts_cmr2dShot.enabled = false;
+            m_rts_cmr2dShot.targetTexture = m_2dshotRtt;
+        }
+
     }
 
-    // Use this for initialization
-    void Start () {
-    }
-
-    private float timer = 0;
-	// Update is called once per frame
-	void Update () 
+    bool saveToRT = false;
+	void Update ()
     {
-		if(drawRT)
+        if(saveToRT)
         {
-            drawRT = false;
-            DrawToRT();
+            Debug.LogError("Copy Texture:" + Time.frameCount);
+
             RTToTexture();
+            saveToRT = false;
         }
 
-        timer += Time.deltaTime;
-        if(timer>1)
+        if (!RenderOnce && CamRenderFrameCount != Time.frameCount)
         {
-            timer = 0;
-            Image shot2DImage = GetShot2DImage();
-            if(null != shot2DImage)
-            {
-                shot2DImage.gameObject.SetActive(!shot2DImage.gameObject.activeInHierarchy);
-                //when UI is enabled , we force to RenderTexture Render and write to Texture2D
-                if(shot2DImage.gameObject.activeInHierarchy)
-                {
-                    DrawToRT();
-                    RTToTexture();
-                }
-            }
+            RenderOnce = true;
+            DrawToRT();
         }
-    }
 
+        //timer += Time.deltaTime;
+        //if(timer>1)
+        //{
+        //    timer = 0;
+        //    Image shot2DImage = GetShot2DImage();
+        //    if(null != shot2DImage)
+        //    {
+        //        //shot2DImage.gameObject.SetActive(!shot2DImage.gameObject.activeInHierarchy);
+        //        ////when UI is enabled , we force to RenderTexture Render and write to Texture2D
+        //        //if(shot2DImage.gameObject.activeInHierarchy)
+        //        {
+        //            DrawToRT();
+        //        }
+        //    }
+        //}
+    }
 
     void DrawToRT()
     {
+        if (CamRenderFrameCount == Time.frameCount)
+            return;
+
+        Debug.LogError("AAA  Render:" + Time.frameCount);
+
+        CamRenderFrameCount = Time.frameCount;
+
+        saveToRT = true;
         m_rts_cmr2dShot.Render();
     }
-
 
     Image GetShot2DImage()
     {
@@ -82,7 +98,7 @@ public class RTCapture : MonoBehaviour {
     void RTToTexture()
     {
         RenderTexture.active = m_2dshotRtt;
-
+            
         Image shot2DImage = GetShot2DImage();
         shot2DImage.enabled = true;
         if (m_2dShotTextre == null)
@@ -93,11 +109,11 @@ public class RTCapture : MonoBehaviour {
         shot2DImage.sprite = Sprite.Create(m_2dShotTextre, new Rect(0, 0, m_width, m_height), new Vector2(0.5f, 0.5f));
     }
 
-    void OnGUI()
-    {
-        if(GUI.Button(new Rect(Screen.width - 200,0,200,150),"RenderRT"))
-        {
-            drawRT = true;
-        }
-    }
+    //void OnGUI()
+    //{
+    //    if(GUI.Button(new Rect(Screen.width - 200,0,200,150),"RenderRT"))
+    //    {
+    //        drawRT = true;
+    //    }
+    //}
 }
