@@ -54,7 +54,13 @@ public class RTCapture : MonoBehaviour {
             Image shot2DImage = GetShot2DImage();
             if(null != shot2DImage)
             {
-                shot2DImage.enabled = !shot2DImage.enabled;
+                shot2DImage.gameObject.SetActive(!shot2DImage.gameObject.activeInHierarchy);
+                //when UI is enabled , we force to RenderTexture Render and write to Texture2D
+                if(shot2DImage.gameObject.activeInHierarchy)
+                {
+                    DrawToRT();
+                    RTToTexture();
+                }
             }
         }
     }
@@ -69,7 +75,7 @@ public class RTCapture : MonoBehaviour {
     Image GetShot2DImage()
     {
         //Image shot2DImage = CUIUtility.FindComponent<Image>(gameObject, k_2dShotImageName);
-        Image shot2DImage = gameObject.GetComponent<Image>();
+        Image shot2DImage = gameObject.GetComponentInChildren<Image>(true);
         return shot2DImage;
     }
 
