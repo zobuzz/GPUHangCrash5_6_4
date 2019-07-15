@@ -3,6 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public enum E_CaptureState
+{
+    E_WRITE,
+    E_READ,
+};
+
 public class RTCapture : MonoBehaviour {
 
     public Texture2D m_2dShotTextre = null;
@@ -12,12 +18,14 @@ public class RTCapture : MonoBehaviour {
     public static Camera m_rts_cmr2dShot = null;
     public static int CamRenderFrameCount = -1;
     public static int S_WriteID = 1;
+    public static int S_ReadID = 1;
+    public static E_CaptureState S_CPState = E_CaptureState.E_WRITE;
 
     public int m_width = 128;
     public int m_height = 128;
 
-    //bool drawRT = false;
     bool RenderOnce = false;
+    bool saveToRT = false;
 
     void Awake()
     {
@@ -41,8 +49,33 @@ public class RTCapture : MonoBehaviour {
 
     }
 
-    bool saveToRT = false;
-	void Update ()
+
+    void Update()
+    {
+        // 绘制RenderTexture To Folder 写贴图的状态
+        if (S_CPState == E_CaptureState.E_WRITE)
+        {
+            State_Write();
+        }
+        else if (S_CPState == E_CaptureState.E_READ)
+        {
+            State_Read();
+        }
+    }
+
+    void State_Read()
+    {
+        if (!RenderOnce && CamRenderFrameCount != Time.frameCount)
+        {
+            RenderOnce = true;
+            string iconPath = "Zorro" + S_ReadID;
+            S_ReadID++;
+
+            LoadFromCache(iconPath);
+        }
+    }
+
+    void State_Write ()
     {
         if(saveToRT)
         {
@@ -62,22 +95,6 @@ public class RTCapture : MonoBehaviour {
             DrawToRT();
 
         }
-
-        //timer += Time.deltaTime;
-        //if(timer>1)
-        //{
-        //    timer = 0;
-        //    Image shot2DImage = GetShot2DImage();
-        //    if(null != shot2DImage)
-        //    {
-        //        //shot2DImage.gameObject.SetActive(!shot2DImage.gameObject.activeInHierarchy);
-        //        ////when UI is enabled , we force to RenderTexture Render and write to Texture2D
-        //        //if(shot2DImage.gameObject.activeInHierarchy)
-        //        {
-        //            DrawToRT();
-        //        }
-        //    }
-        //}
     }
 
     void DrawToRT()
@@ -187,23 +204,4 @@ public class RTCapture : MonoBehaviour {
         s_3dIconTextureCacher.AddFile(GetCacheKey(iconPath, m_width, m_height), m_2dShotTextre.EncodeToPNG(), m_2dShotTextre.width, m_2dShotTextre.height);
     }
 
-    //void Do2dShotCleanup()
-    //{
-    //    RenderTexture.active = m_2dshotRtt;
-
-    //    Image shot2DImage = GetShot2DImage();
-    //    shot2DImage.enabled = true;
-    //    if (m_2dShotTextre == null)
-    //        m_2dShotTextre = new Texture2D(m_width, m_height, TextureFormat.ARGB32, false);
-    //    m_2dShotTextre.ReadPixels(new Rect(0, 0, m_width, m_height), 0, 0);
-    //    m_2dShotTextre.Apply();
-    //    shot2DImage.SetSprite(Sprite.Create(m_2dShotTextre, new Rect(0, 0, m_2dShotTextre.width, m_2dShotTextre.height), Vector2.zero), ImageAlphaTexLayout.None);
-    //    s_3dIconTextureCacher.AddFile(GetCacheKey(m_iconPath, m_width, m_height), m_2dShotTextre.EncodeToPNG(), m_2dShotTextre.width, m_2dShotTextre.height);
-    //    ChgGameObject4Shot(gameObject, false);
-    //    s_cmr2dShot.targetTexture = null;
-    //    s_cmr2dShot.transform.SetParent(null);
-    //    m_shotStep = enTakeShotStep.NotActived;
-    //    Shot2dActiveGos(!m_isInRotating);
-    //    CleanAll3dModels();
-    //}
 }
