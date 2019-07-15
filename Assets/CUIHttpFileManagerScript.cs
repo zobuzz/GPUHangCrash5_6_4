@@ -11,8 +11,8 @@ using System.Collections.Generic;
 using System.IO;
 using System;
 
-namespace Assets.Scripts.UI
-{
+//namespace Assets.Scripts.UI
+//{
     ////state
     //public enum enHttpFileDownloadState
     //{
@@ -924,4 +924,4 @@ namespace Assets.Scripts.UI
         }
     };
     
-};
+//};
