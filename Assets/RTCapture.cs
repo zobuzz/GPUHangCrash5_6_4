@@ -109,11 +109,57 @@ public class RTCapture : MonoBehaviour {
         shot2DImage.sprite = Sprite.Create(m_2dShotTextre, new Rect(0, 0, m_width, m_height), new Vector2(0.5f, 0.5f));
     }
 
-    //void OnGUI()
-    //{
-    //    if(GUI.Button(new Rect(Screen.width - 200,0,200,150),"RenderRT"))
-    //    {
-    //        drawRT = true;
-    //    }
-    //}
+
+    const string c_iconTextureCacheFolderName = "avatar";
+    //static CHttpFileCacher s_3dIconTextureCacher;
+
+    void WriteToCache()
+    {
+         
+    }
+
+    /// <summary>
+    /// Delete the cache directory, call it when resources are updated
+    /// </summary>
+    public static void DeleteIconTextureCacheDirectory()
+    {
+        //CFileManager.DeleteDirectory(CHttpFileCacher.GetCacheDirectory(c_iconTextureCacheFolderName));
+    }
+
+    public void LoadFromCache()
+    {
+        //string cachePath = s_3dIconTextureCacher.GetCachedFilePath(GetCacheKey(iconPath, m_width, m_height), 100);
+        //if (!string.IsNullOrEmpty(cachePath))
+        //{
+        //    m_iconPath = iconPath;
+        //    for (int i = 0; i < transform.childCount; i++)
+        //    {
+        //        transform.GetChild(i).gameObject.CustomSetActive(false);
+        //    }
+
+        //    byte[] data = CFileManager.ReadFile(cachePath);
+        //    if (data != null && data.Length > 0)
+        //    {
+        //        if (m_2dShotTextre == null)
+        //        {
+        //            m_2dShotTextre = new Texture2D(m_width, m_height, TextureFormat.ARGB32, false);
+        //        }
+        //        m_shotStep = enTakeShotStep.NotActived;
+        //        m_2dShotTextre.LoadImage(data);
+        //        m_2dShotTextre.Apply();
+        //        Image shot2DImage = GetShot2DImage();
+        //        shot2DImage.enabled = true;
+        //        shot2DImage.gameObject.CustomSetActive(true);
+        //        shot2DImage.SetSprite(Sprite.Create(m_2dShotTextre, new Rect(0, 0, m_width, m_height), new Vector2(0.5f, 0.5f)), ImageAlphaTexLayout.None);
+        //        return;
+        //    }
+        //}
+
+    }
+
+    public void WriteTexToCache()
+    { 
+        
+    
+    }
 }
